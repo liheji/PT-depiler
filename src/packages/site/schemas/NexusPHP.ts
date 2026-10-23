@@ -750,8 +750,8 @@ export const SchemaMetadata: TSchemaMetadata<TMetadataKeys> = {
         fields: ["id"],
       },
       {
-        requestConfig: { url: "/userdetails.php", responseType: "document" },
-        assertion: { id: "params.id" },
+        requestConfig: { url: "/userdetails.php?id=$id$", responseType: "document" },
+        assertion: { id: "url" },
         fields: [
           "name",
           "messageCount",
