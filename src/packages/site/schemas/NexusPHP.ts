@@ -727,6 +727,22 @@ export const SchemaMetadata: TSchemaMetadata<TMetadataKeys> = {
         filters: [{ name: "parseNumber" }],
       },
 
+      /**
+       * 做种积分每小时增量。
+       * NexusPHP 官方结算任务中，做种积分（seed_points）每小时仅按“基本奖励”行的“基础魔力”列累积，
+       * 不含捐赠者加成、勋章/官种/后宫附加以及时效魔力（临时魔力），
+       * 因此升级剩余时间不能用 bonusPerHour（含各类加成的合计时魔）回落估算。
+       * 对应 mybonus.php 做种魔力汇总表第一数据行（tr:contains('基本奖励')）的第 5 列 td。
+       */
+      seedingBonusPerHour: {
+        selector: [
+          "tr:contains('基本奖励') > td:nth-child(5)",
+          "tr:contains('基本獎勵') > td:nth-child(5)",
+          "tr:contains('Basic reward') > td:nth-child(5)",
+        ],
+        filters: [{ name: "parseNumber" }],
+      },
+
       lastAccessAt: {
         selector: [
           "td.rowhead:contains('最近动向') + td",

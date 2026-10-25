@@ -230,14 +230,15 @@ export function levelRequirementUnMet(
 
   // 额外计算 增加到达下一级魔力所需时间 （#7）
   for (const bonusKey of ["bonus", "seedingBonus"] as const) {
-    const perHourValue = userInfo[`${bonusKey}PerHour`] ?? userInfo.bonusPerHour ?? 0; // issue#681
+    // issue#681：部分站点未定义 seedingBonusPerHour，需回落到 bonusPerHour
+    // 注意：字段可能是 selector 未命中时写入的空串占位（如 bonusPerHour: ""），需转数值后再判断，否则空串会中断回落链
+    const perHourValue = Number(userInfo[`${bonusKey}PerHour`]) || Number(userInfo.bonusPerHour) || 0;
     if (unmetRequirement[bonusKey] && levelRequirement[bonusKey] && perHourValue > 0) {
       // 如果未满足 bonus 条件，且获取到了 bonusPerHour
       const currentBonus = userInfo[bonusKey] ?? 0;
       const leftBonus = levelRequirement[bonusKey] - currentBonus; // Fixed by #676
       if (leftBonus > 0) {
-        const leftTime = leftBonus / parseFloat(perHourValue);
-        unmetRequirement[`${bonusKey}NeededInterval`] = `${Math.floor(leftTime)}H`;
+        unmetRequirement[`${bonusKey}NeededInterval`] = `${Math.floor(leftBonus / perHourValue)}H`;
       }
     }
   }
